@@ -19,17 +19,7 @@ namespace ForgetTheMilk.Controllers
         [HttpPost]
         public ActionResult Add(string task)
         {
-            var taskItem = new Task() { Description = task };
-            var dueDatePattern = new Regex(@"may\s(\d)");
-            var hasDueDate = dueDatePattern.IsMatch(task);
-
-            if (hasDueDate)
-            {
-                var dueDate = dueDatePattern.Match(task);
-                var day = Convert.ToInt32(dueDate.Groups[1].Value);
-                taskItem.DueDate = new DateTime(DateTime.Today.Year, 5, day);
-            }
-
+            var taskItem = new Task(task, DateTime.Today);
             Tasks.Add(taskItem);
             return RedirectToAction("Index");
         }
@@ -37,6 +27,26 @@ namespace ForgetTheMilk.Controllers
 
     public class Task
     {
+        public Task(string task, DateTime today)
+        {
+
+            Description = task ;
+            var dueDatePattern = new Regex(@"may\s(\d)");
+            var hasDueDate = dueDatePattern.IsMatch(task);
+
+            if (hasDueDate)
+            {
+                var dueDate = dueDatePattern.Match(task);
+                var day = Convert.ToInt32(dueDate.Groups[1].Value);
+                DueDate = new DateTime(DateTime.Today.Year, 5, day);
+                if (DueDate < DateTime.Today)
+                {
+                    DueDate = DueDate.Value.AddYears(1);
+                }
+            }
+
+        }
+
         public string Description { get; set; }
         public DateTime? DueDate { get; set; }
     }

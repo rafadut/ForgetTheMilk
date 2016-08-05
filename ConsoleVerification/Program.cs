@@ -10,14 +10,13 @@ namespace ConsoleVerification
     {
         static void Main(string[] args)
         {
-            TestDescriptionAndNoDueDate();
-            TestMayDueDateDoesWrapYear();
-            TestMayDueDateDoesNotWrapYear();
+            //TestMayDueDateDoesWrapYear();
+            //TestMayDueDateDoesNotWrapYear();
 
             Console.ReadLine();
         }
 
-        private static void PrintOutCome(bool success, string failureMessage)
+        public static void PrintOutCome(bool success, string failureMessage)
         {
             if (success)
             {
@@ -32,48 +31,32 @@ namespace ConsoleVerification
             Console.WriteLine();
         }
 
-        private static void TestDescriptionAndNoDueDate()
-        {
-            var input = "Pickup the groceries";
-            Console.WriteLine("Scenario: " + input);
+        //private static void TestMayDueDateDoesWrapYear()
+        //{
+        //    var input = "Pickup the groceries may 5 - as of 2015-05-31";
+        //    Console.WriteLine("Scenario: " + input);
+        //    var today = new DateTime(2016, 5, 31);
 
-            var task = new Task(input, default(DateTime));
+        //    var task = new Task(input, today);
 
-            var descriptionShouldBe = input;
-            DateTime? dueDateShouldBe = null;
-            var success = descriptionShouldBe == task.Description && dueDateShouldBe == task.DueDate;
-            var failureMessage = "Description: " + task.Description + "should be " + descriptionShouldBe
-                          + Environment.NewLine
-                          + "Due Date: " + task.DueDate + " should be " + dueDateShouldBe;
-            PrintOutCome(success, failureMessage);
-        }
+        //    var dueDateShouldBe = new DateTime(2017, 5, 5);
+        //    var success = dueDateShouldBe == task.DueDate;
+        //    var failureMessage = "Due Date: " + task.DueDate + " should be " + dueDateShouldBe;
+        //    PrintOutCome(success, failureMessage);
+        //}
 
-        private static void TestMayDueDateDoesWrapYear()
-        {
-            var input = "Pickup the groceries may 5 - as of 2015-05-31";
-            Console.WriteLine("Scenario: " + input);
-            var today = new DateTime(2016, 5, 31);
+        //private static void TestMayDueDateDoesNotWrapYear()
+        //{
+        //    var input = "Pickup the groceries may 5 - as of 2015-05-04";
+        //    Console.WriteLine("Scenario: " + input);
+        //    var today = new DateTime(2016, 5, 4);
 
-            var task = new Task(input, today);
+        //    var task = new Task(input, today);
 
-            var dueDateShouldBe = new DateTime(2017, 5, 5);
-            var success = dueDateShouldBe == task.DueDate;
-            var failureMessage = "Due Date: " + task.DueDate + " should be " + dueDateShouldBe;
-            PrintOutCome(success, failureMessage);
-        }
-
-        private static void TestMayDueDateDoesNotWrapYear()
-        {
-            var input = "Pickup the groceries may 5 - as of 2015-05-04";
-            Console.WriteLine("Scenario: " + input);
-            var today = new DateTime(2016, 5, 4);
-
-            var task = new Task(input, today);
-
-            var dueDateShouldBe = new DateTime(2017, 5, 5);
-            var success = dueDateShouldBe == task.DueDate;
-            var failureMessage = "Due Date: " + task.DueDate + " should be " + dueDateShouldBe;
-            PrintOutCome(success, failureMessage);
-        }
+        //    var dueDateShouldBe = new DateTime(2017, 5, 5);
+        //    var success = dueDateShouldBe == task.DueDate;
+        //    var failureMessage = "Due Date: " + task.DueDate + " should be " + dueDateShouldBe;
+        //    PrintOutCome(success, failureMessage);
+        //}
     }
 }

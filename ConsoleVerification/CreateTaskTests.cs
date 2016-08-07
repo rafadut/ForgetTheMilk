@@ -34,9 +34,9 @@ namespace ConsoleVerification
         }
 
         [Test]
-        public void TestMayDueDateDoesWrapYear()
+        public void TestAugDueDateDoesWrapYear()
         {
-            var input = "Pickup the groceries august 5 - as of 2015-08-31";
+            var input = "Pickup the groceries aug 5 - as of 2015-08-31";
             var today = new DateTime(2016, 8, 31);
 
             var task = new Task(input, today);
@@ -45,14 +45,37 @@ namespace ConsoleVerification
         }
 
         [Test]
-        public void TestMayDueDateDoesNotWrapYear()
+        public void TestAugDueDateDoesNotWrapYear()
         {
-            var input = "Pickup the groceries august 5 - as of 2016-08-04";
+            var input = "Pickup the groceries aug 5 - as of 2016-08-04";
             var today = new DateTime(2016, 8, 4);
 
             var task = new Task(input, today);
             
             Expect(task.DueDate, Is.EqualTo(new DateTime(2016, 8, 5)));
+        }
+
+        [Test]
+        [TestCase("Groceries jan 5", 1)]
+        [TestCase("Groceries feb 5", 2)]
+        [TestCase("Groceries mar 5", 3)]
+        [TestCase("Groceries apr 5", 4)]
+        [TestCase("Groceries may 5", 5)]
+        [TestCase("Groceries jun 5", 6)]
+        [TestCase("Groceries jul 5", 7)]
+        [TestCase("Groceries aug 5", 8)]
+        [TestCase("Groceries sep 5", 9)]
+        [TestCase("Groceries oct 5", 10)]
+        [TestCase("Groceries nov 5", 11)]
+        [TestCase("Groceries dec 5", 12)]
+        public void AprilDueDate(string input, int expectedMonth)
+        {
+            var today = new DateTime(2016, 8, 31);
+
+            var task = new Task(input, today);
+
+            Expect(task.DueDate, Is.Not.Null);
+            Expect(task.DueDate.Value.Month, Is.EqualTo(expectedMonth));
         }
     }
 }

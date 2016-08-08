@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using ForgetTheMilk.Controllers;
 using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConsoleVerification
 {
@@ -34,14 +35,15 @@ namespace ConsoleVerification
         }
 
         [Test]
-        public void TestAugDueDateDoesWrapYear()
+        [TestCase("Pickup the groceries aug 5 - as of 2015-08-31")]
+        [TestCase("Pickup the groceries jul 5 - as of 2015-08-31")]
+        public void TestAugDueDateDoesWrapYear(string input)
         {
-            var input = "Pickup the groceries aug 5 - as of 2015-08-31";
             var today = new DateTime(2016, 8, 31);
 
             var task = new Task(input, today);
             
-            Expect(task.DueDate, Is.EqualTo(new DateTime(2017, 8, 5)));
+            Expect(task.DueDate.Value.Year, Is.EqualTo(2017));
         }
 
         [Test]
@@ -68,14 +70,69 @@ namespace ConsoleVerification
         [TestCase("Groceries oct 5", 10)]
         [TestCase("Groceries nov 5", 11)]
         [TestCase("Groceries dec 5", 12)]
-        public void AprilDueDate(string input, int expectedMonth)
+        public void DueDate(string input, int expectedMonth)
         {
-            var today = new DateTime(2016, 8, 31);
-
-            var task = new Task(input, today);
+            var task = new Task(input, default(DateTime));
 
             Expect(task.DueDate, Is.Not.Null);
             Expect(task.DueDate.Value.Month, Is.EqualTo(expectedMonth));
         }
+
+        [Test]
+        public void TwoDigitDay_ParseBothDigits()
+        {
+            var input = "groceries apr 10";
+            var task = new Task(input, default(DateTime));
+            Expect(task.DueDate.Value.Day, Is.EqualTo(10));
+        }
+
+        [Test]
+        public void DayIsPastTheLastDayOfTheMonth_DoesNotParseDueDate()
+        {
+            var input = "groceries apr 44";
+            var task = new Task(input, default(DateTime));
+            Expect(task.DueDate, Is.Null);
+        }
+
+        [Test]
+        public void AddFeb29TaskInMarchOfYearBeforeLeapYear()
+        {
+            var input = "groceries feb 29";
+            var today = new DateTime(2015, 3, 1);
+            var task = new Task(input, today);
+            Expect(task.DueDate.Value, Is.EqualTo(new DateTime(2016,2,29)));
+        }
+
+    }
+
+    public class TaskLinkTests : AssertionHelper
+    {
+        class IgnoreLinkValidator : ILinkValidator
+        {
+            public void Validate(string Link)
+            {
+                
+            }
+        }
+
+        [Test]
+        public void CreateTask_DescriptionWithALink_SetLink()
+        {
+            var input = "test http://www.google.com";
+
+            var task = new Task(input, default(DateTime), new LinkValidator());
+
+            Expect(task.Link, Is.EqualTo("http://www.google.com"));
+        }
+
+        [Test]
+        public void Validate_InvalidUrl_ThrowsException()
+        {
+            var input = "http://www.doesnotexistdotcom.com";
+            
+            Expect(() => new Task(input, default(DateTime), new LinkValidator()),
+                Throws.Exception.With.Message.EqualTo("Invalid Link " + input));
+        }
+
     }
 }
